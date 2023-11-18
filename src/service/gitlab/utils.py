@@ -30,7 +30,7 @@ def get_text_from_repository(link: str, token: str = None):
     return text_content
 
 
-def get_file_from_repository(link: str, token: str = None, output: str = "downloads/gitlab-file.kt"):
+def get_file_from_repository(link: str, token: str = None, output: str = "downloads/gitlab-file.txt"):
     try:
         text = get_text_from_repository(link, token)
         with open(output, 'w+', encoding="utf-8") as file:
