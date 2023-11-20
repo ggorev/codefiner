@@ -2,6 +2,8 @@ import base64
 
 import requests
 
+from src.service.exceptions import InvalidGitlabLinkException
+
 
 def encode_url_path(path: str):
     return path.replace('/', '%2F')
@@ -15,7 +17,7 @@ def get_url_for_request(link: str):
         branch_name = split_link[1].split('/')[0]
         file_path = split_link[1].split('?ref_type')[0].split('/', maxsplit=1)[1]
     else:
-        raise Exception("Invalid GitLab link")
+        raise InvalidGitlabLinkException
     return f"https://gitlab.com/api/v4/projects/{username}%2F{project_name}/repository/files/{encode_url_path(file_path)}?ref={branch_name}"
 
 
