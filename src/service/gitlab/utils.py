@@ -1,7 +1,6 @@
 import base64
 
 import requests
-
 from src.service.exceptions import InvalidGitlabLinkException
 
 
@@ -10,15 +9,21 @@ def encode_url_path(path: str):
 
 
 def get_url_for_request(link: str):
-    if link.startswith("https://gitlab.com"):
+    try:
+        if not link.startswith("https://gitlab.com"):
+            raise InvalidGitlabLinkException
         split_link = link.split('/-/blob/')
         username = split_link[0].split('/')[3]
         project_name = split_link[0].split('/')[4]
         branch_name = split_link[1].split('/')[0]
         file_path = split_link[1].split('?ref_type')[0].split('/', maxsplit=1)[1]
-    else:
+    except Exception:
         raise InvalidGitlabLinkException
     return f"https://gitlab.com/api/v4/projects/{username}%2F{project_name}/repository/files/{encode_url_path(file_path)}?ref={branch_name}"
+
+
+def get_file_extension(link: str):
+    return '.' + link.split('?')[0].split('.')[-1]
 
 
 def get_text_from_repository(link: str, token: str = None):
@@ -27,7 +32,10 @@ def get_text_from_repository(link: str, token: str = None):
         request = requests.get(get_url_for_request(link), headers=headers)
     else:
         request = requests.get(get_url_for_request(link))
-    decoded_data = base64.b64decode(request.json()["content"])
+    try:
+        decoded_data = base64.b64decode(request.json()["content"])
+    except Exception:
+        raise InvalidGitlabLinkException
     text_content = decoded_data.decode('utf-8')
     return text_content
 

@@ -11,6 +11,4 @@ class Predictions(Base):
     path_or_link = Column(String, nullable=False)
     file_extension = Column(String, nullable=False)
     prediction = Column(String, nullable=False)
-    python_probability = Column(Float, nullable=False)
-    java_probability = Column(Float, nullable=False)
-    javascript_probability = Column(Float, nullable=False)
+    probability = Column(Float, nullable=False)
